@@ -1,6 +1,7 @@
 #!/bin/sh
 
-# Copyright 2014 Youssef Eldakar <youssef.eldakar@bibalex.org>
+
+# Copyright (C) 2014 Youssef Eldakar <youssef.eldakar@bibalex.org>
 
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -9,11 +10,44 @@
 
 # This program is distributed in the hope that it will be useful, but
 # WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 # General Public License for more details.
 
 # You should have received a copy of the GNU General Public License
-# along with this program. If not, see <http://www.gnu.org/licenses/>.
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+# TODO: Convert the following comment blocks into a manpage.
+
+# This is a wrapper around rsync for syncing a user's home directory on
+# a workstation or laptop with the one on a remote server, such as on
+# NFS or AFS.  Typically, the sync direction is remote-local, i.e.,
+# 'downsyncing'.  However, local-remote, i.e., 'upsyncing', is also
+# valid.
+
+# As the only argument to the program, use either 'down' for setting the
+# sync mode to downsync or 'up' for upsync.  If the mode is not
+# explicitly set, the default is 'down'.
+
+# For downsync, an exclusion list is defined to allow for "protecting"
+# selected entries in the user's home directory from the syncing.  The
+# downsync exclusion list is .HOMEsync.excludes.down in the user's home
+# directory.
+
+# Similarly, for upsync, an inclusion list is defined for selecting the
+# specific entries in the user's home directory to be upsynced to the
+# remote server.  The upsync inclusion list is .HOMEsync.includes.up in
+# the user's home directory.  By default, during an upsync, everything
+# else not in the inclusion list is excluded.  However, to turn this
+# off, which is ALMOST CERTAINLY NEVER DESIRED, use 'up!' as the mode.
+
+# The hostname and path to the user's home directory on the remote
+# server are set in .HOMEsync.HOME in the user's home directory on the
+# local end in the same notation rsync uses, and the path is not to end
+# with a trailing slash, e.g., 'fileserver:/home/tom'.
+
+# Error output from rsync is redirected to .HOMEsync.log in the user's
+# home directory on the local end.
 
 
   if [ $# -eq 1 ]; then
