@@ -1,0 +1,69 @@
+#!/bin/sh
+
+# Copyright 2014 Youssef Eldakar <youssef.eldakar@bibalex.org>
+
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or (at
+# your option) any later version.
+
+# This program is distributed in the hope that it will be useful, but
+# WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
+# General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+
+
+  if [ $# -eq 1 ]; then
+
+      if [ "$1" = "down" ]; then
+        mode="down"
+    elif [ "$1" = "up"   ]; then
+        mode="up"
+
+        # While upsyncing, be sure to exclude "everything else" even if
+        # includes.up does not say so.
+        precautious="--exclude '/*'"
+    elif [ "$1" = "up!"  ]; then
+        mode="up"
+
+        # The '!' means to turn precautious off. At this point,
+        # $precautious would not have been initialized, but still be
+        # extra "precautious" and clear the string.
+        precautious=
+    else
+        # Bad invocation.
+
+        exit 1
+      fi
+
+elif [ $# -eq 0 ]; then
+  # The default mode is downsync.
+  mode="down"
+else
+    # And bad invocation here, too.
+
+    exit 1
+  fi
+
+# Local (l) and remote (r), both not ending with slash.
+l=$HOME
+r=$(cat $HOME/.HOMEsync.HOME)
+
+  if [ $mode = "down" ]; then
+    # By default, use an exclusion list with mode = down.
+    in_ex="exclude"
+
+    rsync -a --delete --$in_ex-from=$HOME/.HOMEsync.${in_ex}s.$mode $precautious $r/ $l/ >$HOME/.HOMEsync.log 2>&1
+elif [ $mode = "up"   ]; then
+    # By default, use an inclusion list with mode = up.
+    in_ex="include"
+
+    rsync -a --delete --$in_ex-from=$HOME/.HOMEsync.${in_ex}s.$mode $precautious $l/ $r/ >$HOME/.HOMEsync.log 2>&1
+else
+    # Bad mode. How come?
+
+    exit 1
+  fi
