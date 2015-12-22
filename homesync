@@ -50,6 +50,7 @@
 # home directory on the local end.
 
 
+  # Use the specified mode.  If none specified, use the default.
   if [ $# -eq 1 ]; then
 
       if [ "$1" = "down" ]; then
@@ -59,11 +60,11 @@
 
         # While upsyncing, be sure to exclude "everything else" even if
         # includes.up does not say so.
-        precautious="--exclude '/*'"
+        precautious="--exclude '*'"
     elif [ "$1" = "up!"  ]; then
         mode="up"
 
-        # The '!' means to turn precautious off. At this point,
+        # The '!' means to turn precautious off.  At this point,
         # $precautious would not have been initialized, but still be
         # extra "precautious" and clear the string.
         precautious=
@@ -86,18 +87,32 @@ else
 l=$HOME
 r=$(cat $HOME/.HOMEsync.HOME)
 
+# Also, s and d, source and destination, respectively.
+s=
+d=
+
   if [ $mode = "down" ]; then
-    # By default, use an exclusion list with mode = down.
+    # Use an exclusion list with mode = down.
     in_ex="exclude"
 
-    rsync -a --delete --$in_ex-from=$HOME/.HOMEsync.${in_ex}s.$mode $precautious $r/ $l/ >$HOME/.HOMEsync.log 2>&1
+    s="$r"
+    d="$l"
 elif [ $mode = "up"   ]; then
-    # By default, use an inclusion list with mode = up.
+    # Use an inclusion list with mode = up.
     in_ex="include"
 
-    rsync -a --delete --$in_ex-from=$HOME/.HOMEsync.${in_ex}s.$mode $precautious $l/ $r/ >$HOME/.HOMEsync.log 2>&1
+    s="$l"
+    d="$r"
 else
-    # Bad mode. How come?
+    # Bad mode.  How come?
 
     exit 1
   fi
+
+# It is worth noting here that using the precautious "exclude everything
+# else" while the mode is downsync (exclude list) probably would not
+# make much sense.  The way it is implemented, $precautious will always
+# be unset if the mode is downsync.
+
+# Finally, execute rsync.
+rsync -a --delete --$in_ex-from=$HOME/.HOMEsync.${in_ex}s.$mode $precautious $s/ $d/ >$HOME/.HOMEsync.log 2>&1
