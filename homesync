@@ -60,7 +60,7 @@
 
         # While upsyncing, be sure to exclude "everything else" even if
         # includes.up does not say so.
-        precautious="--exclude '*'"
+        precautious="--exclude='*'"
     elif [ "$1" = "up!"  ]; then
         mode="up"
 
